@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Tolerance Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://api.fontshare.com/v2/css?f[]=bespoke-serif@400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.cdnfonts.com/css/oak-sans" rel="stylesheet" />
+
+    <style>
+        :root {
+            --primary-color: #98012e;
+            --secondary-color: #fcb034;
+            --selected-color: #D2FFE8;
+            --text-color: #060000;
+            --background-color: #f9f9f9;
+            --container-bg: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --input-bg: #f5f5f5;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Oak Sans', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        body.dark-mode {
+            background: #121212;
+            color: #fff;
+        }
+
+        body.dark-mode .slider {
+            background: #333;
+            background: #fff;
+        }
+
+        ul {
+            margin-left: 1rem;
+        }
+
+        .app {
+            background: var(--container-bg);
+            width: 90%;
+            max-width: 600px;
+            margin: 100px auto 0;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .app h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            font-family: 'Bespoke Serif', serif;
+            margin: 0;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .quiz {
+            padding: 20px 0;
+            text-align: left;
+        }
+
+        .quiz h2 {
+            font-size: 1.6rem;
+            font-family: 'Oak Sans', sans-serif;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .quiz h3 {
+            font-family: 'Oak Sans', sans-serif;
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            background: var(--input-bg);
+            color: var (--text-color);
+            font-family: 'Oak Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            width: 100%;
+            border: 1px solid var(--text-color);
+            padding: 15px;
+            margin: 10px 0;
+            text-align: left;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover:not([disabled]) {
+            background: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .selected {
+            background: var(--selected-color);
+        }
+
+        .nav-button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        #next-btn,
+        #prev-btn {
+            background: var(--primary-color);
+            color: var(--background-color);
+            font-family: 'Oak Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            width: 150px;
+            border: 0;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        #next-btn:hover,
+        #prev-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        #intro-text {
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="app">
+            <h1>Risk Tolerance Questionnaire</h1>
+            <div class="quiz">
+                <h2 id="question-category">Category goes here</h2>
+                <h3 id="question">Question goes here</h3>
+                <h3 id="intro-text">Text goes here</h3>
+                <h3 id="result">Result Example Text Goes here</h3>
+                <div id="answer-buttons">
+                    <button class="btn">Answer 1 goes here</button>
+                    <button class="btn">Answer 2 goes here</button>
+                    <button class="btn">Answer 3 goes here</button>
+                </div>
+                <div class="nav-button-container">
+                    <button id="prev-btn">Previous Question</button>
+                    <button id="next-btn">Next Question</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const results = [
+            {
+                strategy: "a Conservative Investor!",
+                description: `A conservative investor prioritizes protecting their money rather than taking risks for higher returns. 
+                Preferring low-risk, stable investments like savings accounts, CDs, and government bonds. 
+                Although these options provide security, they typically offer lower returns over time.`,
+                traits: [
+                    { text: "Prioritizing safety and stability over high returns 🦺" },
+                    { text: "Avoiding investments that may lose value quickly 🙅📉" },
+                    { text: "Comfortable with slow, steady growth ☺️" },
+                    { text: "Typically invest for the short-term while minimizing risk 🏦" }
+                ],
+                example: `a retiree preferring to keep their money safe
+                in a savings account or in bonds rather than investing their money in the stocks. 
+                Since they want to not lose too much money rather than taking their chances in making a lot of it!`
+            },
+            {
+                strategy: "a Moderate Investor!",
+                description: `A moderate investor seeks a balance between risk and security. 
+                They understand that some risk is necessary for growth, but still want a level of protection. 
+                They typically invest in a mix of stocks and bonds, giving them both growth potential and stability.`,
+                traits: [
+                    { text: "Balancing risk and safety in their investment choices 😬⚖️😌" },
+                    { text: "Accepting some ups and downs in the market 👍📈📉" },
+                    { text: "Typically invests for medium to long-term goals 🥅" },
+                    { text: "Using a mix of investments to spread out risk 🥣" }
+                ],
+                example: `a seasoned professional who puts some of their money into a 
+                savings account for security while investing in stocks to build wealth over time. 
+                They are willing to accept smaller risks for bigger rewards in the moderate to long term.`
+            },
+            {
+                strategy: "an Aggressive Investor!",
+                description: `An aggressive investor is focused on long-term growth and high returns, 
+                even if it means taking big risks. They invest mostly in stocks, new businesses, or high-growth opportunities,
+                 knowing their portfolio might experience big ups and downs along the way.`,
+                traits: [
+                    { text: "Willing to take higher risks for bigger potential rewards ⚠️🤑" },
+                    { text: "Investing in stocks, startups, or fast-growing industries 🚀" },
+                    { text: "Can tolerate market fluctuations and losses 😌📈📉" },
+                    { text: "Typically investing for long-term goals 🥅" }
+                ],
+                example: `a young professional investing most of their money in stocks or even cryptocurrencies, 
+                while being aware that values might drop, but could also rise significantly. 
+                They’re comfortable with taking a number of risks today for bigger rewards in the future.`
+            }
+
+        ]
+        const questions = [
+            {
+                category: "Investment Timeline",
+                question: "What are you investing for?",
+                answers: [
+                    { text: "Something soon, like a big trip ✈️ or a new laptop 💻 (0-3 years) ", points: 1 },
+                    { text: "Saving for a car 🚘, grad school 🎓, or a house 🏠 down payment (3-10 years)", points: 2 },
+                    { text: "Long-term wealth and retirement 🏝️ (10+ years)", points: 3 }
+                ]
+            },
+            {
+                category: "Investment Timeline",
+                question: "When do you think you’ll need to use most of your investment money?",
+                answers: [
+                    { text: "In the next 3 years ⏰", points: 1 },
+                    { text: "Between 3-10 years 🗓️", points: 2 },
+                    { text: "More than 10 years from now ⏳", points: 3 }
+                ]
+            },
+            {
+                category: "Financial Situation",
+                question: "What best describes your current financial status?",
+                answers: [
+                    { text: "I’m living paycheck to paycheck with little savings 💸", points: 1 },
+                    { text: "I have some savings, but also some financial obligations 💵", points: 2 },
+                    { text: "I have a solid emergency fund 🏦 and little to no financial stress ☺️", points: 3 }
+                ]
+            },
+            {
+                "category": "Financial Situation",
+                "question": "If you suddenly had an unexpected expense (like car repairs or a medical bill), how would it affect your investments?",
+                "answers": [
+                    { "text": "I would need to use my credit card or get a short-term loan to cover it 💳", "points": 1 },
+                    { "text": "I have enough emergency savings to handle it without touching my investments 💰", "points": 2 },
+                    { "text": "I might need to withdraw some funds from my investments to cover the expense 📉", "points": 3 }
+                ]
+            },
+            {
+                category: "Investment Knowledge & Experience",
+                question: "How familiar are you with investing?",
+                answers: [
+                    { text: "Not at all – I’m just getting started 🌱", points: 1 },
+                    { text: "I know the basics but don’t feel super confident 🙁", points: 2 },
+                    { text: "I have experience and feel comfortable making investment decisions 👍", points: 3 }
+                ]
+            },
+            {
+                category: "Investment Knowledge & Experience",
+                question: `Have you ever invested in assets like 
+                <a href="https://ursinus.instructure.com/courses/17095/pages/types-of-investment-vehicles">
+                    stocks, ETFs, or mutual funds
+                </a> before?`,
+                answers: [
+                    { text: "Nope, I’ve only kept money in a savings account 🏦", points: 1 },
+                    { text: "Yes, but I stick to low-risk options 💰", points: 2 },
+                    { text: "Yes, and I’m comfortable with a mix of investments, including riskier ones 📈", points: 3 }
+                ]
+            },
+            {
+                category: "Handling Risk & Market Fluctuations",
+                question: "If your investment dropped 20% in value overnight, what would you do?",
+                answers: [
+                    { text: "Sell everything to avoid losing more 😱", points: 1 },
+                    { text: "Be worried, but hold onto my investments 😬", points: 2 },
+                    { text: "See it as an opportunity to buy more at a lower price 🤑", points: 3 }
+                ]
+            },
+            {
+                category: "Handling Risk & Market Fluctuations",
+                question: "How do you feel about market ups and downs?",
+                answers: [
+                    { text: "I hate seeing my balance go down – I want stability 😬", points: 1 },
+                    { text: "I can handle some changes but prefer moderate stability 😐", points: 2 },
+                    { text: "I’m fine with big swings if it means higher potential returns 🎢", points: 3 }
+                ]
+            },
+            {
+                category: "Investment Goals & Return Expectations",
+                question: "What’s your main investment goal?",
+                answers: [
+                    { text: "Keep my money safe with minimal risk 🏦", points: 1 },
+                    { text: "Steady growth with some risk 🛣️", points: 2 },
+                    { text: "Maximum growth, even if it means big risks 😬📈", points: 3 }
+                ]
+            },
+            {
+                category: "Investment Goals & Return Expectations",
+                question: "What kind of returns are you aiming for, knowing that higher returns mean more risk?",
+                answers: [
+                    { text: "Low risk, stable returns (3-5%) 🏦", points: 1 },
+                    { text: "Moderate risk, balanced growth (6-10%) 📊", points: 2 },
+                    { text: "High risk, aggressive growth (11%+) 📈", points: 3 }
+                ]
+            }
+        ];
+
+        const questionElement = document.getElementById("question");
+        const questionCategoryElement = document.getElementById("question-category")
+        const introTextElement = document.getElementById("intro-text");
+        const resultTextElement = document.getElementById("result")
+        const darkModeToggle = document.getElementById("dark-mode-toggle");
+        const answerButtons = document.getElementById("answer-buttons");
+        const prevButton = document.getElementById("prev-btn");
+        const nextButton = document.getElementById("next-btn");
+        let currentQuestionIndex = 0;
+        let resultIndex = 0;
+        let selectedAnswers = Array(questions.length).fill(0);
+        let score = 0;
+        let result = "";
+        let isIntro = true;
+        let isFirstTime = true;
+
+        /**
+         * Start the Risk Tolerance Questionnaire
+         * 
+         * @summary Checks if the user has started it for the first time, otherwise it skips to the first question
+         * 
+         */
+        function startQuiz() {
+        //Reset everything to the intro for variables
+            currentQuestionIndex = 0;
+            score = 0;
+            isIntro = true;
+            nextButton.innerHTML = "Next Question";
+            resetState();
+            resultTextElement.style.display = "none";
+        //If it is the first time the user is starting the quiz then it goes through a brief introduction:
+            if (isFirstTime) {
+                introTextElement.style.display = "block";
+                questionCategoryElement.style.display = "none";
+                questionElement.innerHTML = "<b>College Student Risk Tolerance Quiz<b>";
+                introTextElement.innerHTML = `Are you ready to start investing but unsure how much risk you should take? <br>This
+            quick quiz will help you figure out your personal risk tolerance based on your
+            financial goals, experience, and how you react to market ups and downs. Your
+            responses will help determine your ideal investment strategy!`
+        //Otherwise we skip to the first question
+            } else {
+                introTextElement.style.display = "none";
+                showQuestion();
+            }
+        }
+
+        /** 
+        * Resets the state of the quiz before showing the next question
+        * @summary Hides appropriate buttons and removes the answers listed 
+        */
+        function resetState() {
+        //Clean up the buttons and the answer responses before the question
+            nextButton.style.display = isIntro ? "block" : "none";
+            prevButton.style.display =  "none";
+            while (answerButtons.firstChild) {
+                answerButtons.removeChild(answerButtons.firstChild);
+            }
+        }
+        
+        /** 
+        * Shows the Question
+        * 
+        */
+        function showQuestion() {
+        //Since we're start the questions, it's not longer the introduction and we prepare our space
+            isIntro = false;
+            resetState();
+
+        //Gets the questions from the appropriate data structures
+            let currentQuestion = questions[currentQuestionIndex];
+            let questionNo = currentQuestionIndex + 1;
+
+        // Display the question and the categories:
+            questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
+            questionCategoryElement.innerHTML = currentQuestion.category;
+
+        // Setup the answers for the current question
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerHTML = answer.text;
+                button.classList.add("btn");
+                answerButtons.appendChild(button);
+                button.dataset.points = answer.points;
+                button.addEventListener("click", selectAnswer);
+            });
+        }
+        
+        /** 
+        * Selects the answer from the question and highlights it
+        * @summary user selects an answer and it highlights and tallies the point value of the answer
+        * @param {event} e - the event when the user clicks the button 
+        */
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            const pointValue = Number(selectedBtn.dataset.points);
+            const buttonsArray = answerButtons.querySelectorAll(".btn");
+
+            // Removed the selected if one has been selected already
+            buttonsArray.forEach(button => {
+                button.classList.remove("selected");
+            });
+
+            // Make the clicked button selected
+            selectedBtn.classList.add("selected");
+
+            // Assign the selected button's point value to the selectedAnswers
+            selectedAnswers[currentQuestionIndex] = pointValue;
+
+            //Adjusts the score based on the points by recalculating the total 
+            //over all current questions
+            score = selectedAnswers.reduce((total, points) => total + points, 0);
+
+            //Make sure to only display the previous button if its after the first question
+            prevButton.style.display = currentQuestionIndex == 0 ? "none" : "block";
+            nextButton.style.display = "block";
+        }
+
+        /**
+         * Shows the result of the Risk Tolerance Questionnaire
+         */
+        function showResult() {
+            //Set up the space
+            resetState();
+
+        //Various categories of investors based on scores:
+            isConservative = score === 10;
+            isModerate = score >= 11 && score <= 20;
+            isAggressive = score >= 21 && score <= 30;
+
+        //
+            if (isConservative) {
+                resultIndex = 0;
+            } else if (isModerate) {
+                resultIndex = 1;
+            } else if (isAggressive) {
+                resultIndex = 2
+            }
+
+        //Display results:
+            result = results[resultIndex];
+            questionCategoryElement.innerHTML = `Result: You are ${result.strategy}`;
+            introTextElement.style.display = "block";
+            resultTextElement.style.display = "block";
+            questionElement.innerHTML = result.description;
+            introTextElement.innerHTML = `Key Traits:<ul> ${getTraitsList()}</ul>`;
+            resultTextElement.innerHTML = `A typical example is ${result.example}`;
+
+        //Display the appropriate buttons:
+            nextButton.innerHTML = "Restart Questionnaire";
+            nextButton.style.display = "block";
+            prevButton.style.display = "none";
+
+        //Show Ursinus-themed confetti:
+            showConfetti();
+        }
+
+        /**
+         * Get the Investor Traits and return them as a list
+         * @return {array} A list of HTML Bullet pointed list
+         */
+        function getTraitsList() {
+            result = results[resultIndex];
+            let list = "";
+
+            // Put each Key Traits of an investor in a bulleted list:
+            result.traits.forEach(trait => {
+                item = `<li>${trait.text}</li>`
+                list += item
+            })
+            return (list)
+        }
+
+        function showConfetti() {
+            //Code is from the package website on School Pride :)
+            //https://www.kirilv.com/canvas-confetti/
+
+            var end = Date.now() + (2 * 1000);
+
+            // Go Bears!
+            var colors = ['#98012E', '#FCB034'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 2,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 2,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        /**
+         * Handles the event when the user presses the next button
+         */ 
+        function handleNextButton() {
+            //If the user is not at the intro page then it goes to the next question or result 
+            // depending if the user completed the quiz or not
+            if (!isIntro) {
+                currentQuestionIndex++;
+                currentQuestionIndex < questions.length ? showQuestion() : showResult()
+            //Otherwise, it will go to the first question:
+            } else {
+                introTextElement.style.display = "none";
+                resultTextElement.style.display = "none";
+                questionCategoryElement.style.display = "block";
+                showQuestion();
+            }
+        }
+        
+        function handlePrevButton() {
+            //If we are at the results, we want to just show the question,
+            // and reset the Next Question text
+            if (!isIntro && currentQuestionIndex != 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            } 
+        }
+
+        nextButton.addEventListener("click", () => {
+            if (currentQuestionIndex < questions.length) {
+                handleNextButton()
+            } else {
+                isFirstTime = false;
+                startQuiz();
+            }
+        })
+
+        prevButton.addEventListener("click", () => {
+            if (currentQuestionIndex < questions.length) {
+                handlePrevButton()
+            } 
+        })
+
+        startQuiz();
+
+    </script>
+
+</body>
+
+</html>
