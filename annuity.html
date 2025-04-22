@@ -829,11 +829,10 @@
         : calculateBasicPayout()
 
       // Check if the Payout lasts forever based on fixed amount payout
-      if (isPayoutMode) {
+      if (isPayoutMode && !isMonteCarlo) {
         payoutWithinBounds = checkIfPayoutLastsForever(result);
 
       }
-      
       if (isMonteCarlo){
         isAlwaysSuccess = displaySuccessRate(result.successRate);
         if (isAlwaysSuccess){
