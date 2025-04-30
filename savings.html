@@ -474,144 +474,149 @@
     const plot = document.getElementById("plot").style;
     const monthlyContribution = document.getElementById("monthly_contribution");
     const totalSavings = document.getElementById("total_savings");
-    const startMonth = document.getElementById("goal_month");
-    
+    const currentSavings = document.getElementById("current_savings");
+    const monthlyExpense = document.getElementById("monthly_expense");
+    const startMonthInput = document.getElementById("start_month");
+    const startYearInput = document.getElementById("start_year");
+    const goalMonthInput = document.getElementById("goal_month");
+    const goalYearInput = document.getElementById("goal_year");
+    const moneyContainer = document.getElementById("money");
 
     window.onload = function () {
-      document.getElementById("monthly_expense").value = 1000;
-      document.getElementById("current_savings").value = 0;
+      monthlyExpense.value = 1000;
+      currentSavings.value = 0;
       initializeDate();
       calculateSavings();
     };
 
     // Add event listeners to the input fields
-    document.getElementById("money").addEventListener("input", (e) => {
+    moneyContainer.addEventListener("input", (e) => {
       let isValidInput = e.target.value.length > 0 && Number(e.target.value) >= 0;
       if (isValidInput) {
         calculateSavings();
       }
     });
 
-    document.getElementById("start_month").addEventListener("change", calculateSavings);
-    document.getElementById("goal_month").addEventListener("change", calculateSavings);
-    document.getElementById("start_year").addEventListener("change", (e) => {
+    startMonthInput.addEventListener("change", calculateSavings);
+    startYearInput.addEventListener("change", (e) => {
       const isCurrentYear = e.target.value == currentYear;
-      const startMonth = document.getElementById("start_month");
 
-      //Normalize the Month :)
+      // Normalize the Month :)
       if (isCurrentYear) {
         for (var month = 0; month <= currentMonth; month++) {
-          startMonth.options[month].disabled = true;
+          startMonthInput.options[month].disabled = true;
         }
-        if (Number(startMonth.value) < currentMonth) {
-          startMonth.value = currentMonth;
+        if (Number(startMonthInput.value) < currentMonth) {
+          startMonthInput.value = currentMonth;
         }
       } else {
         for (var month = 0; month <= currentMonth; month++) {
-          startMonth.options[month].disabled = false;
+          startMonthInput.options[month].disabled = false;
         }
       }
       calculateSavings();
     });
 
-    document.getElementById("goal_year").addEventListener("change", (e) => {
+    goalMonthInput.addEventListener("change", calculateSavings);
+
+    goalYearInput.addEventListener("change", (e) => {
       const isCurrentYear = e.target.value == currentYear;
       if (isCurrentYear) {
         for (var month = 0; month <= currentMonth; month++) {
-          startMonth.options[month].disabled = true;
+          goalMonthInput.options[month].disabled = true;
         }
-        if (Number(startMonth.value) < currentMonth) {
-          startMonth.value = currentMonth;
+        if (Number(startMonthInput.value) < currentMonth) {
+          goalMonthInput.value = currentMonth;
         }
       } else {
         for (var month = 0; month <= currentMonth; month++) {
-          startMonth.options[month].disabled = false;
+          goalMonthInput.options[month].disabled = false;
         }
       }
       calculateSavings();
     });
 
     function checkValidRange() {
-      const startMonth = Number(document.getElementById("start_month").value);
-      const startYear = Number(document.getElementById("start_year").value);
-      const goalMonth = Number(document.getElementById("goal_month").value);
-      const goalYear = Number(document.getElementById("goal_year").value);
+      const startMonth = Number(startMonthInput.value);
+      const startYear = Number(startYearInput.value);
+      const goalMonth = Number(goalMonthInput.value);
+      const goalYear = Number(goalYearInput.value);
 
-      const isValid = ((goalYear > startYear && startYear > 0)
-      || (goalYear === startYear && (goalMonth - startMonth) > 1));
+      const isValid =
+        (goalYear > startYear && startYear > 0) ||
+        (goalYear === startYear && goalMonth - startMonth > 1);
 
-      const isInitialize = (goalMonth === 0 && goalYear === 0
-      && startMonth === 0 && startYear === 0);
+      const isInitialize =
+        goalMonth === 0 &&
+        goalYear === 0 &&
+        startMonth === 0 &&
+        startYear === 0;
 
-      const isError = !isValid && !isInitialize && (goalYear != 0 && startYear != 0);
+      const isError = !isValid && !isInitialize && goalYear != 0 && startYear != 0;
       const isSameDate = goalYear === startYear && goalMonth === startMonth;
 
-      if (isError && (isSameDate || (goalMonth - startMonth) === 1)){
+      if (isError && (isSameDate || goalMonth - startMonth === 1)) {
         alert("The plot will not display");
       } else if (isError) {
         alert("Please ensure the goal date is after the start date, and try again!");
       }
 
-      return isValid
+      return isValid;
     }
 
     // Initialize the years in the dropdown by the current year
     function initializeDate() {
       var numYears = 10;
-      var startYear = document.getElementById("start_year");
-      var goalYear = document.getElementById("goal_year");
       for (var i = 0; i <= numYears; i++) {
         var yearOption = document.createElement("option");
         yearOption.value = currentYear + i;
         yearOption.text = currentYear + i;
-        startYear.appendChild(yearOption);
-        goalYear.appendChild(yearOption.cloneNode(true));
+        startYearInput.appendChild(yearOption);
+        goalYearInput.appendChild(yearOption.cloneNode(true));
       }
-
     }
 
     function calculateSavings() {
-      const monthlyExpense = Number(document.getElementById("monthly_expense").value);
-      const currentSavings = Number(document.getElementById("current_savings").value);
-      const startMonth = Number(document.getElementById("start_month").value);
-      const startYear = Number(document.getElementById("start_year").value);
-      const goalMonth = Number(document.getElementById("goal_month").value);
-      const goalYear = Number(document.getElementById("goal_year").value);
+      const monthlyExpenseValue = Number(monthlyExpense.value);
+      const currentSavingsValue = Number(currentSavings.value);
+      const startMonth = Number(startMonthInput.value);
+      const startYear = Number(startYearInput.value);
+      const goalMonth = Number(goalMonthInput.value);
+      const goalYear = Number(goalYearInput.value);
 
-      const continueCalculation = checkValidRange()
+      const continueCalculation = checkValidRange();
       // Calculate the total savings needed
-      const minimumSavingsNeeded = (monthlyExpense * 3) - currentSavings;
-      const maximumSavingsNeeded = (monthlyExpense * 6) - currentSavings;
+      const minimumSavingsNeeded = monthlyExpenseValue * 3 - currentSavingsValue;
+      const maximumSavingsNeeded = monthlyExpenseValue * 6 - currentSavingsValue;
 
       plot.display = continueCalculation ? "block" : "none";
       if (continueCalculation) {
         // Calculate the number of months between the start and goal dates
         const startDate = new Date(startYear, startMonth);
         const goalDate = new Date(goalYear, goalMonth);
-        const numMonths = (goalDate.getFullYear() - startDate.getFullYear()) * 12
-          + (goalDate.getMonth() - startDate.getMonth());
+        const numMonths =
+          (goalDate.getFullYear() - startDate.getFullYear()) * 12 +
+          (goalDate.getMonth() - startDate.getMonth());
 
         const minMonthlySavings = minimumSavingsNeeded / numMonths;
         const maxMonthlySavings = maximumSavingsNeeded / numMonths;
 
-        var minSavingsValues = [currentSavings];
-        var maxSavingsValues = [currentSavings];
+        var minSavingsValues = [currentSavingsValue];
+        var maxSavingsValues = [currentSavingsValue];
         var monthValues = [];
 
         for (var month = 1; month <= numMonths; month++) {
           var newMonth = new Date(startDate.setMonth(startDate.getMonth() + 1));
-          monthValues.push(newMonth)
+          monthValues.push(newMonth);
           minSavingsValues.push(minSavingsValues[month - 1] + minMonthlySavings);
           maxSavingsValues.push(maxSavingsValues[month - 1] + maxMonthlySavings);
         }
 
         displayResults(minimumSavingsNeeded, maximumSavingsNeeded, numMonths);
         plotSavings(minSavingsValues, maxSavingsValues, monthValues);
-
       } else {
         displayResults(minimumSavingsNeeded, maximumSavingsNeeded, 0);
       }
-
     }
 
     function displayResults(minimumSavingsNeeded, maximumSavingsNeeded, numMonths) {
@@ -630,17 +635,18 @@
       monthlyContribution.style.display = numMonths != 0 ? "block" : "none";
 
       if (numMonths != 0) {
-        'You need to save an extra $ per month to cover 3 months of expenses'
         monthlyContribution.innerHTML = `To cover 3 months of expenses, save
         ${formattedMinMonthlySavings} per month
         <br>To cover 6 months of expenses, save
         ${formattedMaxMonthlySavings} per month`;
       }
 
-
-      totalSavings.innerHTML = "For a 3-Month Emergency Savings, you should save " +
-        formattedMinSavings + "<br>"
-        + "For a 6-Month Emergency Savings, you should save " + formattedMaxSavings;
+      totalSavings.innerHTML =
+        "For a 3-Month Emergency Savings, you should save " +
+        formattedMinSavings +
+        "<br>" +
+        "For a 6-Month Emergency Savings, you should save " +
+        formattedMaxSavings;
     }
 
     function plotSavings(minSavingsValues, maxSavingsValues, monthValues) {

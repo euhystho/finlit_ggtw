@@ -1,680 +1,662 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Title of the Application -->
-    <title>The Grizzly Future Value Calculator</title>
 
-    <!-- External Packages and Files -->
-    <!-- The Javascript File for Plotly -->
-    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
-    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Title of the Application -->
+  <title>The Grizzly Future Value Calculator</title>
 
-    <!-- Ursinus Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://api.fontshare.com/v2/css?f[]=bespoke-serif@400&display=swap"
-      rel="stylesheet"
-    />
-    <link href="https://fonts.cdnfonts.com/css/oak-sans" rel="stylesheet" />
+  <!-- External Packages and Files -->
+  <!-- The Javascript File for Plotly -->
+  <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+  <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
 
-    <!-- The CSS Formatting -->
-    <style>
-      :root {
-        --primary-color: #98012e;
-        --secondary-color: #fcb034;
-        --text-color: #060000;
-        --background-color: #f9f9f9;
-        --container-bg: #ffffff;
-        --border-radius: 8px;
-        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        --input-bg: #f5f5f5;
-        --transition: all 0.3s ease;
+  <!-- Ursinus Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=bespoke-serif@400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.cdnfonts.com/css/oak-sans" rel="stylesheet" />
+
+  <!-- The CSS Formatting -->
+  <style>
+    :root {
+      --primary-color: #98012e;
+      --secondary-color: #fcb034;
+      --text-color: #060000;
+      --background-color: #f9f9f9;
+      --container-bg: #ffffff;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --input-bg: #f5f5f5;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Oak Sans", sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      font-family: "Bespoke Serif", serif;
+      padding: 20px 30px;
+      color: var(--secondary-color);
+      background-color: var(--primary-color);
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--box-shadow);
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: 600;
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    h2 {
+      font-family: "Anton", sans-serif;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      font-weight: 500;
+      font-size: 1.8rem;
+    }
+
+    h3 {
+      font-family: "Bespoke Serif", serif;
+      color: "black";
+      margin-bottom: 20px;
+      font-weight: 400;
+      font-size: 1.1rem;
+    }
+
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    aside {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    section {
+      flex: 2;
+      min-width: 400px;
+    }
+
+    .container {
+      background-color: var(--container-bg);
+      box-shadow: var(--box-shadow);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      height: 100%;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border: none;
+      background-color: var(--input-bg);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-family: "Oak Sans", sans-serif;
+      transition: var(--transition);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1),
+        0 0 0 3px rgba(98, 173, 134, 0.2);
+    }
+
+    input[type="number"]::placeholder {
+      color: #999;
+    }
+
+    /* Hides the Arrows on the input */
+    input[type="number"] {
+      appearance: none;
+      /* Standard property */
+      -webkit-appearance: none;
+      /* Fallback for older Webkit browsers */
+      -moz-appearance: textfield;
+      /* Fallback for older Firefox */
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Input container for years label */
+    .input-container {
+      position: relative;
+      width: 100%;
+    }
+
+    /* Years label styling */
+    .input-label {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      pointer-events: none;
+      font-size: 1rem;
+      font-family: "Oak Sans", sans-serif;
+    }
+
+    @keyframes justshake {
+      25% {
+        transform: translateX(5px);
       }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+      50% {
+        transform: translateX(-5px);
       }
 
-      body {
-        font-family: "Oak Sans", sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-color);
-        line-height: 1.6;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 20px;
+      75% {
+        transform: translateX(5px);
       }
 
-      header {
-        font-family: "Bespoke Serif", serif;
-        padding: 20px 30px;
-        color: var(--secondary-color);
-        background-color: var(--primary-color);
-        border-radius: 0 0 var(--border-radius) var(--border-radius);
-        margin-bottom: 30px;
-        box-shadow: var(--box-shadow);
-        text-align: center;
+      100% {
+        transform: translateX-(5px);
+      }
+    }
+
+    /* The switch - the box around the slider */
+    .switch {
+      font-size: 17px;
+      position: relative;
+      display: inline-block;
+      width: 3.5em;
+      height: 2em;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    /* The slider */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgb(182, 182, 182);
+      transition: 0.4s;
+      border-radius: 10px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 1.4em;
+      width: 1.4em;
+      border-radius: 8px;
+      left: 0.3em;
+      bottom: 0.3em;
+      transform: rotate(270deg);
+      background-color: rgb(255, 255, 255);
+      transition: 0.4s;
+    }
+
+    .switch input:checked+.slider {
+      background-color: #62ad86;
+    }
+
+    .switch input:focus+.slider {
+      box-shadow: 0 0 1px #2196f3;
+    }
+
+    .switch input:checked+.slider:before {
+      transform: translateX(1.5em);
+    }
+
+    #plot {
+      margin-bottom: 25px;
+      min-height: 400px;
+    }
+
+    #end_balance,
+    #interest {
+      font-family: "Oak Sans", sans-serif;
+      padding: 15px;
+      margin-bottom: 10px;
+      background-color: var(--input-bg);
+      border-radius: var(--border-radius);
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    /* Add right padding to the periods input to make room for the text */
+    #num_periods,
+    #int_rate {
+      padding-right: 60px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    /* Make the form elements stack nicely on smaller screens */
+    @media screen and (max-width: 768px) {
+      main {
+        flex-direction: column;
+      }
+
+      aside,
+      section {
+        width: 100%;
+        min-width: unset;
       }
 
       h1 {
-        font-weight: 600;
-        font-size: 2.5rem;
-        margin: 0;
+        font-size: 2rem;
       }
 
       h2 {
-        font-family: "Anton", sans-serif;
-        color: var(--primary-color);
-        margin-bottom: 20px;
-        font-weight: 500;
-        font-size: 1.8rem;
+        font-size: 1.5rem;
       }
 
       h3 {
-        font-family: "Bespoke Serif", serif;
-        color: "black";
-        margin-bottom: 20px;
-        font-weight: 400;
-        font-size: 1.1rem;
-      }
-
-      main {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        margin-bottom: 50px;
-      }
-
-      aside {
-        flex: 1;
-        min-width: 300px;
-      }
-
-      section {
-        flex: 2;
-        min-width: 400px;
-      }
-
-      .container {
-        background-color: var(--container-bg);
-        box-shadow: var(--box-shadow);
-        padding: 25px;
-        border-radius: var(--border-radius);
-        height: 100%;
-      }
-
-      input[type="number"] {
-        width: 100%;
-        padding: 15px;
-        margin: 10px 0;
-        border: none;
-        background-color: var(--input-bg);
-        border-radius: var(--border-radius);
         font-size: 1rem;
-        font-family: "Oak Sans", sans-serif;
-        transition: var(--transition);
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
       }
 
-      input[type="number"]:focus {
-        outline: none;
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1),
-          0 0 0 3px rgba(98, 173, 134, 0.2);
+      h4 {
+        font-size: 0.5rem;
+      }
+    }
+  </style>
+</head>
+
+<!-- Body of the HTML Document -->
+
+<body>
+  <header>
+    <h1>The Grizzly Future Value Calculator</h1>
+  </header>
+  <main>
+    <aside>
+      <div class="container">
+        <form id="form">
+          <h2>Investment Parameters</h2>
+          <h3>Initial Investment:</h3>
+          <input type="number" id="init_invstmnt" placeholder="Initial Investment ($)" pattern="[0-9]*" />
+          <h3 id="contribution_text">Annual Contribution:</h3>
+          <input type="number" id="periodic_contri_amt" placeholder="Contribution ($)" pattern="[0-9]*" />
+          <h3 id="investment_periods_text">Number of Investment Years:</h3>
+          <div class="input-container">
+            <input type="number" id="num_periods" placeholder="Number of Years" pattern="[0-9]*" />
+            <span id="periods_label" class="input-label">years</span>
+          </div>
+          <h3 id="int_rate_text">Annual Interest/Return Rate (%):</h3>
+          <div class="input-container">
+            <input type="number" id="int_rate" placeholder="Interest Rate" pattern="[0-9]*" />
+            <span class="input-label">%</span>
+          </div>
+
+          <h3>Market Forecasting Mode:</h3>
+          <label class="switch">
+            <input id="mode" type="checkbox" />
+            <span class="slider"></span>
+          </label>
+        </form>
+      </div>
+    </aside>
+    <section>
+      <div class="container">
+        <div id="plot"></div>
+        <div id="end_balance"></div>
+        <div id="interest"></div>
+      </div>
+    </section>
+    <footer>
+      Grizzly Guide to Wealth | Disclaimer: This calculator provides estimates
+      only and should not be considered as financial advice.
+    </footer>
+  </main>
+
+  <script>
+    // Global variable to track the current mode
+    let currentMode = document.getElementById("mode").checked
+      ? "forecast"
+      : "basic";
+    let timeout;
+
+    const formElement = document.getElementById("form");
+    const calculationMode = document.getElementById("mode");
+
+    // Calculate basic investment values
+    function calculateBasicInvestment() {
+      const init_invstmnt = Number(
+        document.getElementById("init_invstmnt").value
+      );
+      const int_rate =
+        Number(document.getElementById("int_rate").value) / 100;
+      const num_periods = Number(
+        document.getElementById("num_periods").value
+      );
+      const periodic_contri_amt = Number(
+        document.getElementById("periodic_contri_amt").value
+      );
+
+      let totalValues = [init_invstmnt];
+      let total = init_invstmnt;
+      let totalInterest = [0];
+      let cumulativeInterest = 0;
+
+      // Calculate values for each period
+      for (let period = 0; period < num_periods; period++) {
+        // Calculate the new balance with interest
+        let startBalance = total;
+        total = (total + periodic_contri_amt) * (1 + int_rate);
+        let interestThusFar = total - (startBalance + periodic_contri_amt);
+        cumulativeInterest += interestThusFar;
+
+        totalValues.push(total);
+        totalInterest.push(cumulativeInterest);
       }
 
-      input[type="number"]::placeholder {
-        color: #999;
-      }
-      /* Hides the Arrows on the input */
-      input[type="number"] {
-        appearance: none; /* Standard property */
-        -webkit-appearance: none; /* Fallback for older Webkit browsers */
-        -moz-appearance: textfield; /* Fallback for older Firefox */
-      }
-      input::-webkit-outer-spin-button,
-      input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
+      return {
+        balanceValues: totalValues,
+        intValues: totalInterest,
+      };
+    }
 
-      /* Input container for years label */
-      .input-container {
-        position: relative;
-        width: 100%;
-      }
+    function calculateMarketForecastInvestment() {
+      const initInvestment = Number(
+        document.getElementById("init_invstmnt").value
+      );
+      const numYears = Number(document.getElementById("num_periods").value);
+      const periodicPayAmt = Number(
+        document.getElementById("periodic_contri_amt").value
+      );
+      const int_rate =
+        Number(document.getElementById("int_rate").value) / 100;
 
-      /* Years label styling */
-      .input-label {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #999;
-        pointer-events: none;
-        font-size: 1rem;
-        font-family: "Oak Sans", sans-serif;
-      }
-      @keyframes justshake {
-        25% {
-          transform: translateX(5px);
-        }
+      const numTrials = 100;
+      const dailyMarketRate = Math.pow(1 + int_rate, 1 / 365) - 1;
 
-        50% {
-          transform: translateX(-5px);
-        }
+      let investValues = [];
+      let interestValues = [];
 
-        75% {
-          transform: translateX(5px);
-        }
-
-        100% {
-          transform: translateX-(5px);
-        }
-      }
-
-      /* The switch - the box around the slider */
-      .switch {
-        font-size: 17px;
-        position: relative;
-        display: inline-block;
-        width: 3.5em;
-        height: 2em;
-      }
-
-      /* Hide default HTML checkbox */
-      .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-
-      /* The slider */
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgb(182, 182, 182);
-        transition: 0.4s;
-        border-radius: 10px;
-      }
-
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 1.4em;
-        width: 1.4em;
-        border-radius: 8px;
-        left: 0.3em;
-        bottom: 0.3em;
-        transform: rotate(270deg);
-        background-color: rgb(255, 255, 255);
-        transition: 0.4s;
-      }
-
-      .switch input:checked + .slider {
-        background-color: #62ad86;
-      }
-
-      .switch input:focus + .slider {
-        box-shadow: 0 0 1px #2196f3;
-      }
-
-      .switch input:checked + .slider:before {
-        transform: translateX(1.5em);
-      }
-
-      #plot {
-        margin-bottom: 25px;
-        min-height: 400px;
-      }
-
-      #end_balance,
-      #interest {
-        font-family: "Oak Sans", sans-serif;
-        padding: 15px;
-        margin-bottom: 10px;
-        background-color: var(--input-bg);
-        border-radius: var(--border-radius);
-        font-size: 1.2rem;
-        font-weight: 500;
-      }
-
-      /* Add right padding to the periods input to make room for the text */
-      #num_periods,
-      #int_rate {
-        padding-right: 60px;
-      }
-
-      footer {
-        text-align: center;
-        padding: 20px;
-        font-size: 0.9rem;
-        color: #777;
-      }
-
-      /* Make the form elements stack nicely on smaller screens */
-      @media screen and (max-width: 768px) {
-        main {
-          flex-direction: column;
-        }
-
-        aside,
-        section {
-          width: 100%;
-          min-width: unset;
-        }
-
-        h1 {
-          font-size: 2rem;
-        }
-
-        h2 {
-          font-size: 1.5rem;
-        }
-
-        h3 {
-          font-size: 1rem;
-        }
-
-        h4 {
-          font-size: 0.5rem;
-        }
-      }
-    </style>
-  </head>
-
-  <!-- Body of the HTML Document -->
-
-  <body>
-    <header>
-      <h1>The Grizzly Future Value Calculator</h1>
-    </header>
-    <main>
-      <aside>
-        <div class="container">
-          <form id="form">
-            <h2>Investment Parameters</h2>
-            <h3>Initial Investment:</h3>
-            <input
-              type="number"
-              id="init_invstmnt"
-              placeholder="Initial Investment ($)"
-              pattern="[0-9]*"
-            />
-            <h3 id="contribution_text">Annual Contribution:</h3>
-            <input
-              type="number"
-              id="periodic_contri_amt"
-              placeholder="Contribution ($)"
-              pattern="[0-9]*"
-            />
-            <h3 id="investment_periods_text">Number of Investment Years:</h3>
-            <div class="input-container">
-              <input
-                type="number"
-                id="num_periods"
-                placeholder="Number of Years"
-                pattern="[0-9]*"
-              />
-              <span id="periods_label" class="input-label">years</span>
-            </div>
-            <h3 id="int_rate_text">Annual Interest/Return Rate (%):</h3>
-            <div class="input-container">
-              <input
-                type="number"
-                id="int_rate"
-                placeholder="Interest Rate"
-                pattern="[0-9]*"
-              />
-              <span class="input-label">%</span>
-            </div>
-
-            <h3>Market Forecasting Mode:</h3>
-            <label class="switch">
-              <input id="mode" type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </form>
-        </div>
-      </aside>
-      <section>
-        <div class="container">
-          <div id="plot"></div>
-          <div id="end_balance"></div>
-          <div id="interest"></div>
-        </div>
-      </section>
-      <footer>
-        Grizzly Guide to Wealth | Disclaimer: This calculator provides estimates
-        only and should not be considered as financial advice.
-      </footer>
-    </main>
-
-    <script>
-      // Global variable to track the current mode
-      let currentMode = document.getElementById("mode").checked
-        ? "montecarlo"
-        : "basic";
-      let timeout;
-
-      // Calculate basic investment values
-      function calculateBasicInvestment() {
-        const init_invstmnt = Number(
-          document.getElementById("init_invstmnt").value
-        );
-        const int_rate =
-          Number(document.getElementById("int_rate").value) / 100;
-        const num_periods = Number(
-          document.getElementById("num_periods").value
-        );
-        const periodic_contri_amt = Number(
-          document.getElementById("periodic_contri_amt").value
-        );
-
-        let totalValues = [init_invstmnt];
-        let total = init_invstmnt;
-        let totalInterest = [0];
+      for (let trial = 0; trial < numTrials; trial++) {
+        let investmentBalance = initInvestment;
         let cumulativeInterest = 0;
 
-        // Calculate values for each period
-        for (let period = 0; period < num_periods; period++) {
-          // Calculate the new balance with interest
-          let startBalance = total;
-          total = (total + periodic_contri_amt) * (1 + int_rate);
-          let interestThusFar = total - (startBalance + periodic_contri_amt);
-          cumulativeInterest += interestThusFar;
+        for (let year = 0; year < numYears; year++) {
+          investmentBalance += periodicPayAmt;
+          let interestTotal = 0;
 
-          totalValues.push(total);
-          totalInterest.push(cumulativeInterest);
-        }
+          for (let day = 0; day < 365; day++) {
+            const marketChangePercentage = d3.randomNormal(
+              dailyMarketRate,
+              0.005
+            )();
+            const dailyChange = investmentBalance * marketChangePercentage;
+            interestTotal += dailyChange;
+            investmentBalance += dailyChange;
+          }
 
-        return {
-          balanceValues: totalValues,
-          intValues: totalInterest,
-        };
-      }
+          cumulativeInterest += interestTotal;
 
-      function calculateMarketForecastInvestment() {
-        const initInvestment = Number(
-          document.getElementById("init_invstmnt").value
-        );
-        const numYears = Number(document.getElementById("num_periods").value);
-        const periodicPayAmt = Number(
-          document.getElementById("periodic_contri_amt").value
-        );
-        const int_rate =
-          Number(document.getElementById("int_rate").value) / 100;
-
-        const numTrials = 100;
-        const dailyMarketRate = Math.pow(1 + int_rate, 1 / 365) - 1;
-
-        let investValues = [];
-        let interestValues = [];
-
-        for (let trial = 0; trial < numTrials; trial++) {
-          let investmentBalance = initInvestment;
-          let cumulativeInterest = 0;
-
-          for (let year = 0; year < numYears; year++) {
-            investmentBalance += periodicPayAmt;
-            let interestTotal = 0;
-
-            for (let day = 0; day < 365; day++) {
-              const marketChangePercentage = d3.randomNormal(
-                dailyMarketRate,
-                0.005
-              )();
-              const dailyChange = investmentBalance * marketChangePercentage;
-              interestTotal += dailyChange;
-              investmentBalance += dailyChange;
-            }
-
-            cumulativeInterest += interestTotal;
-
-            if (trial > 0) {
-              investValues[year] += investmentBalance;
-              interestValues[year] += cumulativeInterest;
-            } else {
-              investValues.push(investmentBalance);
-              interestValues.push(cumulativeInterest);
-            }
+          if (trial > 0) {
+            investValues[year] += investmentBalance;
+            interestValues[year] += cumulativeInterest;
+          } else {
+            investValues.push(investmentBalance);
+            interestValues.push(cumulativeInterest);
           }
         }
-
-        for (let year = 0; year < investValues.length; year++) {
-          investValues[year] /= numTrials;
-          interestValues[year] /= numTrials;
-        }
-
-        investValues.unshift(initInvestment);
-        interestValues.unshift(0);
-
-        return {
-          balanceValues: investValues,
-          intValues: interestValues,
-          // CHANGE THESE WHEN IMPLEMENT THE MONTE CARLO
-          maxYear: 0,
-          isInfinite: false,
-          recommendedPayout: 0
-        };
       }
 
-      // Update display values in the UI
-      function updateDisplayValues(result, isMarketForecast) {
-        const numPeriods = Number(document.getElementById("num_periods").value);
-        const nf = new Intl.NumberFormat(navigator.language, {
-          style: "currency",
-          currency: "USD",
-        });
-        const endingBalance =
-          result.balanceValues[result.balanceValues.length - 1].toFixed(2);
-        const interest =
-          result.intValues[result.intValues.length - 1].toFixed(2);
-
-        document.getElementById("end_balance").innerHTML =
-          "After " +
-          numPeriods +
-          (isMarketForecast
-            ? " years you will have, on average: "
-            : " years you will have: ") +
-          nf.format(endingBalance);
-        document.getElementById("interest").innerHTML =
-          (isMarketForecast
-            ? "Average Total Interest: "
-            : "Total Interest Earned: ") + nf.format(interest);
+      for (let year = 0; year < investValues.length; year++) {
+        investValues[year] /= numTrials;
+        interestValues[year] /= numTrials;
       }
 
-      // Plot the data
-      function plotData(result, isMarketForecast) {
-        const currentYear = new Date().getFullYear();
-        const { balanceValues, intValues } = result;
-        var periodValues = Array.from(
-          { length: balanceValues.length },
-          (_, i) => (isMarketForecast ? i + currentYear : i)
-        );
-        const nf = new Intl.NumberFormat(navigator.language);
+      investValues.unshift(initInvestment);
+      interestValues.unshift(0);
 
-        var totalData = {
-          x: periodValues,
-          y: balanceValues,
-          name: "Balance",
-          mode: "lines",
-          type: "scatter",
-          fill: "tonexty",
-          fillcolor: "#98012E",
-          hovertemplate: isMarketForecast
-            ? "Year: %{x}" +
-              "<br> Total Balance: $%{y:.2f} <br>" +
-              "<extra></extra>"
-            : "Period: %{x}" +
-              "<br> Total Balance: $%{y:.2f} <br>" +
-              "<extra></extra>",
-          line: {
-            color: "#EF3340",
-            width: 4,
-          },
-          markers: {
-            size: 10,
-          },
-        };
+      return {
+        balanceValues: investValues,
+        intValues: interestValues
+      };
+    }
 
-        var intData = {
-          x: periodValues,
-          y: intValues,
-          name: "Interest",
-          mode: "lines",
-          type: "scatter",
-          fill: "tozeroy",
-          fillcolor: "#62AD86",
-          hovertemplate: isMarketForecast
-            ? "Year: %{x}" +
-              "<br> Total Interest: $%{y:.2f} <br>" +
-              "<extra></extra>"
-            : "Period: %{x}" +
-              "<br> Total Interest: $%{y:.2f} <br>" +
-              "<extra></extra>",
-          line: {
-            color: "#D2FFE8",
-            width: 4,
-          },
-          markers: {
-            size: 10,
-          },
-        };
+    // Update display values in the UI
+    function updateDisplayValues(result, isMarketForecast) {
+      const numPeriods = Number(document.getElementById("num_periods").value);
+      const nf = new Intl.NumberFormat(navigator.language, {
+        style: "currency",
+        currency: "USD",
+      });
+      const endingBalance =
+        result.balanceValues[result.balanceValues.length - 1].toFixed(2);
+      const interest =
+        result.intValues[result.intValues.length - 1].toFixed(2);
 
-        var data = [totalData, intData];
+      document.getElementById("end_balance").innerHTML =
+        "After " +
+        numPeriods +
+        (isMarketForecast
+          ? " years you will have, on average: "
+          : " years you will have: ") +
+        nf.format(endingBalance);
+      document.getElementById("interest").innerHTML =
+        (isMarketForecast
+          ? "Average Total Interest: "
+          : "Total Interest Earned: ") + nf.format(interest);
+    }
 
-        var layout = {
+    // Plot the data
+    function plotData(result, isMarketForecast) {
+      const currentYear = new Date().getFullYear();
+      const { balanceValues, intValues } = result;
+      var periodValues = Array.from(
+        { length: balanceValues.length },
+        (_, i) => (isMarketForecast ? i + currentYear : i)
+      );
+      const nf = new Intl.NumberFormat(navigator.language);
+
+      var totalData = {
+        x: periodValues,
+        y: balanceValues,
+        name: "Balance",
+        mode: "lines",
+        type: "scatter",
+        fill: "tonexty",
+        fillcolor: "#98012E",
+        hovertemplate: isMarketForecast
+          ? "Year: %{x}" +
+          "<br> Total Balance: $%{y:.2f} <br>" +
+          "<extra></extra>"
+          : "Period: %{x}" +
+          "<br> Total Balance: $%{y:.2f} <br>" +
+          "<extra></extra>",
+        line: {
+          color: "#EF3340",
+          width: 4,
+        },
+        markers: {
+          size: 10,
+        },
+      };
+
+      var intData = {
+        x: periodValues,
+        y: intValues,
+        name: "Interest",
+        mode: "lines",
+        type: "scatter",
+        fill: "tozeroy",
+        fillcolor: "#62AD86",
+        hovertemplate: isMarketForecast
+          ? "Year: %{x}" +
+          "<br> Total Interest: $%{y:.2f} <br>" +
+          "<extra></extra>"
+          : "Period: %{x}" +
+          "<br> Total Interest: $%{y:.2f} <br>" +
+          "<extra></extra>",
+        line: {
+          color: "#D2FFE8",
+          width: 4,
+        },
+        markers: {
+          size: 10,
+        },
+      };
+
+      var data = [totalData, intData];
+
+      var layout = {
+        title: {
+          text: isMarketForecast
+            ? "Investment Projection Over Years"
+            : "Investment Over Years",
+          font: {
+            family: "Bespoke Serif, serif",
+            size: 24,
+          },
+        },
+        xaxis: {
           title: {
-            text: isMarketForecast
-              ? "Investment Projection Over Years"
-              : "Investment Over Years",
-            font: {
-              family: "Bespoke Serif, serif",
-              size: 24,
-            },
-          },
-          xaxis: {
-            title: {
-              text: "Growth Years",
-              font: {
-                family: "Oak Sans, sans-serif",
-                size: 16,
-              },
-            },
-            gridcolor: "#f0f0f0",
-          },
-          yaxis: {
-            title: {
-              text: "Balance ($)",
-              font: {
-                family: "Oak Sans, sans-serif",
-                size: 16,
-              },
-              standoff: 15
-          },
-          tickprefix: "$",
-            gridcolor: "#f0f0f0",
-          },
-          hoverlabel: {
+            text: "Growth Years",
             font: {
               family: "Oak Sans, sans-serif",
+              size: 16,
             },
           },
-          paper_bgcolor: "rgba(0,0,0,0)",
-          plot_bgcolor: "rgba(0,0,0,0)",
-          showlegend: true,
-          legend: {
-            orientation: "h",
-            y: -0.4,
-            x: 0.5,
-            xanchor: "center",
-            yanchor: "bottom",
+          gridcolor: "#f0f0f0",
+        },
+        yaxis: {
+          title: {
+            text: "Balance ($)",
+            font: {
+              family: "Oak Sans, sans-serif",
+              size: 16,
+            },
+            standoff: 15
           },
-          margin: {
-            t: 60,
-            b: 80,
+          tickprefix: "$",
+          gridcolor: "#f0f0f0",
+        },
+        hoverlabel: {
+          font: {
+            family: "Oak Sans, sans-serif",
           },
-        };
+        },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        showlegend: true,
+        legend: {
+          orientation: "h",
+          y: -0.4,
+          x: 0.5,
+          xanchor: "center",
+          yanchor: "bottom",
+        },
+        margin: {
+          t: 60,
+          b: 80,
+        },
+      };
 
-        var config = {
-          responsive: true,
-          displaylogo: false,
-          modeBarButtonsToRemove: ["lasso2d", "select2d"],
-        };
+      var config = {
+        responsive: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ["lasso2d", "select2d"],
+      };
 
-        Plotly.newPlot("plot", data, layout, config);
+      Plotly.newPlot("plot", data, layout, config);
+    }
+
+    // Update the plot based on mode
+    function updatePlot() {
+      const isMarketForecast = document.getElementById("mode").checked;
+      const mode = isMarketForecast ? "forecast" : "basic";
+      currentMode = mode;
+
+      if (mode === "basic") {
+        const result = calculateBasicInvestment();
+        updateDisplayValues(result, isMarketForecast);
+        plotData(result, isMarketForecast);
+      } else {
+        const result = calculateMarketForecastInvestment();
+        updateDisplayValues(result, isMarketForecast);
+        plotData(result, isMarketForecast);
       }
+    }
 
-      // Update the plot based on mode
-      function updatePlot() {
-        const isMarketForecast = document.getElementById("mode").checked;
-        const mode = isMarketForecast ? "montecarlo" : "basic";
-        currentMode = mode;
+    // Event listeners
+    formElement.addEventListener("input", (e) => {
+      const isNumberInput = e.target.matches('input[type="number"]');
+      if (isNumberInput) {
+        const value = e.target.value;
+        let isValidInput =
+          e.target.value.length > 0 && Number(e.target.value) >= 0;
+        let isInvalidYear =
+          e.target.id === "num_periods" && value.includes(".");
+        if (isInvalidYear) {
+          e.target.value = Math.round(Number(value));
+        }
 
-        if (mode === "basic") {
-          const result = calculateBasicInvestment();
-          updateDisplayValues(result, isMarketForecast);
-          plotData(result, isMarketForecast);
-        } else {
-          const result = calculateMarketForecastInvestment();
-          plotData(result, isMarketForecast);
-          updateDisplayValues(result, true);
+        if (isValidInput) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            updatePlot();
+          }, 300);
         }
       }
+    });
 
-      // Event listeners
-      document.getElementById("form").addEventListener("input", (e) => {
-        const isNumberInput = e.target.matches('input[type="number"]');
-        if (isNumberInput) {
-          const value = e.target.value;
-          let isValidInput =
-            e.target.value.length > 0 && Number(e.target.value) >= 0;
-          let isInvalidYear =
-            e.target.id === "num_periods" && value.includes(".");
-          if (isInvalidYear) {
-            e.target.value = Math.round(Number(value));
-          }
+    calculationMode.addEventListener("change", (e) => {
+      updatePlot();
+    });
 
-          if (isValidInput) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-              updatePlot();
-            }, 300);
-          }
-        }
-      });
-
-      document.getElementById("mode").addEventListener("change", (e) => {
-        updatePlot();
-      });
-
+    // Initialize with default values
+    window.onload = function () {
+      document.getElementById("init_invstmnt").value = 20000;
+      document.getElementById("int_rate").value = 6;
+      document.getElementById("num_periods").value = 10;
+      document.getElementById("periodic_contri_amt").value = 10000;
       // Initial placeholders
       document.getElementById("end_balance").innerHTML =
         "Ending Balance: Enter values to calculate";
       document.getElementById("interest").innerHTML =
         "Total Interest Earned: Enter values to calculate";
 
-      // Initialize with default values
-      window.onload = function () {
-        document.getElementById("init_invstmnt").value = 20000;
-        document.getElementById("int_rate").value = 6;
-        document.getElementById("num_periods").value = 10;
-        document.getElementById("periodic_contri_amt").value = 10000;
-        updatePlot();
-      };
-    </script>
-  </body>
+      updatePlot();
+    };
+
+  </script>
+</body>
+
 </html>

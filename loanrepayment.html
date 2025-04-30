@@ -605,12 +605,6 @@
 
     // timesListElement.addEventListener("click", handleOptionSelection);
 
-    // // Add event listener for click
-    // triggerElement.addEventListener("click", () => {
-    //     // Toggle the "active" class on the module
-    //     moduleElement.classList.toggle("active");
-    // });
-
     // // Start of Relevant Functions:
     // // Function to handle option selection (as provided)
     // function handleOptionSelection(e) {
@@ -621,48 +615,35 @@
     //         timeframeInput.value = value;
     //         moduleElement.classList.toggle("active");
     //         console.log(timeframeInput.value)
-    //         updateTimeframeCalc(value);
+    //         updateTimeFrameCalc(value);
     //         calculateRepayment();
+    //         moduleElement.classList.toggle("active");
     //     }
     // }
-
-    function updateTimeframeCalc(timeframe) {
-      switch (timeframe) {
-        case "day":
-          yearFrequency = 365;
-          monthFrequency = 30.436875;
-          break;
-        case "week":
-          yearFrequency = 52;
-          monthFrequency = 4.345;
-          break;
-        case "month":
-          yearFrequency = 12;
-          monthFrequency = 1;
-          break;
-        case "year":
-          yearFrequency = 1;
-          monthFrequency = 1 / 12;
-          break;
-        default:
-          yearFrequency = 12;
-          monthFrequency = 1;
-      }
-    }
-
-
-
-    document.addEventListener("input", (e) => {
-      const isNumberInput = e.target.matches('input[type="number"]');
-      if (isNumberInput) {
-        const currentValue = e.target.value;
-        let isValidInput = currentValue.length > 0 && Number(currentValue) >= 0;
-
-        if (isValidInput) {
-          calculateRepayment();
-        }
-      }
-    })
+    //
+    // function updateTimeFrameCalc(timeframe) {
+    //   switch (timeframe) {
+    //     case "day":
+    //       yearFrequency = 365.25;
+    //       monthFrequency = 30.436875;
+    //       break;
+    //     case "week":
+    //       yearFrequency = 52;
+    //       monthFrequency = 4.345;
+    //       break;
+    //     case "month":
+    //       yearFrequency = 12;
+    //       monthFrequency = 1;
+    //       break;
+    //     case "year":
+    //       yearFrequency = 1;
+    //       monthFrequency = 1 / 12;
+    //       break;
+    //     default:
+    //       yearFrequency = 12;
+    //       monthFrequency = 1;
+    //   }
+    // }
 
     function calculateRepayment() {
       const principal = Number(loanAmount.value);
@@ -697,11 +678,11 @@
 
       const normalizedTotal = (numberOfPayments * periodPayment - endingBalance).toFixed(2);
       // Check if any required inputs are empty
-      if (
+      isInputsEmpty = 
           !loanAmount.value.trim() || 
           !interestRate.value.trim() || 
-          (!loanYears.value.trim() && !loanMonths.value.trim())
-      ) {
+          (!loanYears.value.trim() && !loanMonths.value.trim());
+      if (isInputsEmpty){
           summary.style.display = "none"; // Hide the summary
       } else {
         showRepaymentCost(periodPayment, normalizedTotal);
@@ -839,6 +820,17 @@
       Plotly.newPlot('plot', data, layout, config)
     }
 
+    document.addEventListener("input", (e) => {
+      const isNumberInput = e.target.matches('input[type="number"]');
+      if (isNumberInput) {
+        const currentValue = e.target.value;
+        let isValidInput = currentValue.length > 0 && Number(currentValue) >= 0;
+
+        if (isValidInput) {
+          calculateRepayment();
+        }
+      }
+    })
 
     window.onload = (event) => {
       loanAmount.value = 100000;

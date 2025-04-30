@@ -857,12 +857,6 @@
 
         timesListElement.addEventListener("click", handleOptionSelection);
 
-        // Add event listener for click
-        triggerElement.addEventListener("click", () => {
-            // Toggle the "active" class on the module
-            moduleElement.classList.toggle("active");
-        });
-
         // Start of Relevant Functions:
         // Function to handle option selection (as provided)
         function handleOptionSelection(e) {
@@ -877,7 +871,8 @@
                 if (Number(income.value) >= 0 && income.value.length > 0){
                     plot();
                 }
-
+                // Toggle the "active" class on the module
+                moduleElement.classList.toggle("active");
             }
         }
         
