@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Title of the Application -->
+    <title>Expense Calculator</title>
+
+    <!-- External Packages and Files -->
+    <!-- The Javascript File for Plotly -->
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Ursinus Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://api.fontshare.com/v2/css?f[]=bespoke-serif@400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.cdnfonts.com/css/oak-sans" rel="stylesheet" />
+
+    <!-- The CSS Formatting -->
+    <style>
+        :root {
+            --primary-color: #98012e;
+            --secondary-color: #fcb034;
+            --text-color: #060000;
+            --background-color: #f9f9f9;
+            --container-bg: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --input-bg: #f5f5f5;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Oak Sans", sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            font-family: "Bespoke Serif", serif;
+            padding: 20px 30px;
+            color: var(--secondary-color);
+            background-color: var(--primary-color);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        h2 {
+            font-family: "Anton", sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            font-family: "Bespoke Serif", serif;
+            color: "black";
+            margin-bottom: 20px;
+            font-weight: 400;
+            font-size: 1.1rem;
+        }
+
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        aside {
+            flex: 1;
+            min-width: 400px;
+        }
+
+        section {
+            flex: 2;
+            min-width: 400px;
+        }
+
+        html {
+            box-sizing: border-box;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .column {
+            flex: 33.33%;
+            padding: 5px;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            height: auto;
+        }
+
+        /* Tab CSS :) */
+        .tab-container {
+            width: auto;
+            height: auto;
+            min-height: 300px;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked+label .tab-name {
+            color: #FFCD00;
+            font-size: 18px;
+            font-weight: 800;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        input[type="radio"]:checked+label .tab-content {
+            display: block;
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .tab-name {
+            flex: 1;
+            display: flex;
+            color: white;
+            font-family: "Oak Sans", sans-serif;
+            text-align: center;
+            height: auto;
+            width: auto;
+            padding: 15px 10px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: 0.25s;
+            margin-bottom: 10px;
+        }
+
+        .tab-content {
+            display: none;
+            position: relative;
+            width: 100%;
+            font-family: "Oak Sans", sans-serif;
+            background: var(--container-bg);
+            padding: 15px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            opacity: 0;
+            z-index: 0;
+            margin-top: 10px;
+            overflow-y: auto;
+            max-height: 500px;
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            background-color: var(--input-bg);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-family: "Oak Sans", sans-serif;
+            transition: var(--transition);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1),
+                0 0 0 3px rgba(98, 173, 134, 0.2);
+        }
+
+        input[type="number"]::placeholder {
+            color: #999;
+        }
+
+        /* Hides the Arrows on the input */
+        input[type="number"] {
+            appearance: none;
+            /* Standard property */
+            -webkit-appearance: none;
+            /* Fallback for older Webkit browsers */
+            -moz-appearance: textfield;
+            /* Fallback for older Firefox */
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Input container for years label */
+        .input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .date-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        /* Years label styling */
+        .input-label {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+            font-size: 1rem;
+            font-family: "Oak Sans", sans-serif;
+        }
+
+        @keyframes justshake {
+            25% {
+                transform: translateX(5px);
+            }
+
+            50% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+
+            100% {
+                transform: translateX(-5px);
+            }
+        }
+
+        /* The switch - the box around the slider */
+        .switch {
+            font-size: 17px;
+            position: relative;
+            display: inline-block;
+            width: 3.5em;
+            height: 2em;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Add these styles to your existing CSS section */
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .toggle-label-left {
+            font-family: "Oak Sans", sans-serif;
+            font-size: 0.9rem;
+            color: #555;
+            text-align: left;
+        }
+
+        .toggle-label-right {
+            font-family: "Oak Sans", sans-serif;
+            font-size: 0.9rem;
+            color: #555;
+            text-align: right;
+        }
+
+        /* Make the switch smaller and match the colors */
+        .toggle-container .switch {
+            width: 2.6em;
+            height: 1.6em;
+            margin: 0 10px;
+        }
+
+        .toggle-container .slider {
+            background-color: var(--secondary-color);
+        }
+
+        .toggle-container .slider:before {
+            height: 1.1em;
+            width: 1.1em;
+            left: 0.25em;
+            bottom: 0.25em;
+        }
+
+        .toggle-container .switch input:checked+.slider {
+            background-color: var(--primary-color);
+        }
+
+        .toggle-container .switch input:checked+.slider:before {
+            transform: translateX(0.7em);
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgb(182, 182, 182);
+            transition: 0.4s;
+            border-radius: 10px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.4em;
+            width: 1.4em;
+            border-radius: 8px;
+            left: 0.3em;
+            bottom: 0.3em;
+            transform: rotate(270deg);
+            background-color: rgb(255, 255, 255);
+            transition: 0.4s;
+        }
+
+        .switch input:checked+.slider {
+            background-color: #62ad86;
+        }
+
+        .switch input:focus+.slider {
+            box-shadow: 0 0 1px #2196f3;
+        }
+
+        .switch input:checked+.slider:before {
+            transform: translateX(1.5em);
+        }
+
+        .module {
+            width: 100%;
+            margin-bottom: 30px;
+            transition: margin-bottom 700ms ease;
+        }
+
+        .module:hover,
+        .module:focus-within,
+        .module.active {
+            margin-bottom: 140px;
+            transition: margin-bottom 700ms ease;
+        }
+
+        .module.active .trigger ul.times {
+            transform: scaleY(1);
+            transition: 350ms transform ease-in-out;
+        }
+
+        .module .trigger {
+            position: relative;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
+            border-radius: 22px;
+            width: 100%;
+        }
+
+        .module .trigger span {
+            font-weight: 500;
+            letter-spacing: 0px;
+            font-size: 16px;
+            position: relative;
+            background: var(--input-bg);
+            color: #555;
+            display: block;
+            min-width: 0px;
+            height: 44px;
+            padding: 0 18px;
+            z-index: 1;
+            cursor: pointer;
+            border-radius: 22px;
+            transition: 350ms border-radius 700ms, 700ms color 700ms;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .module .trigger span em {
+            font-style: normal;
+            margin-right: 5px;
+            transform-origin: bottom;
+            animation: 700ms waving infinite;
+        }
+
+        @keyframes waving {
+            0% {
+                transform: rotate(-10deg);
+            }
+
+            50% {
+                transform: rotate(10deg);
+            }
+
+            100% {
+                transform: rotate(-10deg)
+            }
+        }
+
+        .module .trigger ul.times {
+            position: absolute;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background: white;
+            border-radius: 0 0 22px 22px;
+            font-size: 14px;
+            overflow: hidden;
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: 350ms transform 350ms;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .module .trigger ul.times li {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 44px;
+            padding: 0 20px;
+            cursor: pointer;
+            z-index: 0;
+            position: relative;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            border-left: 0px solid #eee;
+            transition: 200ms border-left 0ms;
+            box-sizing: border-box;
+        }
+
+        .module .trigger ul.times li::before {
+            content: "";
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to left, var(--secondary-color), var(--primary-color));
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .module .trigger ul.times li:last-of-type {
+            border-radius: 0 0 22px 22px;
+        }
+
+        .module .trigger ul.times li:hover,
+        .module .trigger ul.times li:focus-within {
+            background-color: var(--secondary-color);
+            border-left: 10px solid var(--primary-color);
+        }
+
+        .module .trigger:hover span,
+        .module .trigger:focus-within span {
+            border-radius: 22px 22px 0 0;
+            transition: 350ms border-radius 0ms, 700ms color 700ms;
+            color: #ccc;
+        }
+
+        .module .trigger:hover ul.times,
+        .module .trigger:focus-within ul.times {
+            transform: scaleY(1);
+            transition: 350ms transform 350ms;
+        }
+
+        select {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            background-color: var(--input-bg);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-family: "Oak Sans", sans-serif;
+            transition: var(--transition);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            appearance: none;
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1),
+                0 0 0 3px rgba(98, 173, 134, 0.2);
+        }
+
+        select option {
+            font-family: "Oak Sans", sans-serif;
+            font-size: 1rem;
+        }
+
+        #plot {
+            margin-bottom: 25px;
+            min-height: 500px;
+        }
+
+        #cash_flow {
+            display: none;
+            font-family: "Oak Sans", sans-serif;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: var(--input-bg);
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        /* Make the form elements stack nicely on smaller screens */
+        @media screen and (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            aside,
+            section {
+                width: 100%;
+                min-width: unset;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1rem;
+            }
+
+            h4 {
+                font-size: 0.5rem;
+            }
+
+            .toggle-container .switch input:checked+.slider:before {
+                transform: translateX(1em);
+            }
+        }
+
+        .accordion {
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .accordion-header {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 15px;
+            cursor: pointer;
+            font-family: "Oak Sans", sans-serif;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: var(--container-bg);
+            font-family: "Oak Sans", sans-serif;
+            font-size: 1rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Expense Calculator</h1>
+    </header>
+    <main>
+        <aside>
+            <div class="container">
+                <h2>Income & Expenses</h2>
+                <div class="module">
+                    <h3>Expense Timeframe:</h3>
+                    <div class="trigger">
+                        <span id="selected-timeframe"><em>⏰</em>Select Time Frame</span>
+                        <ul class="times">
+                            <li data-value="month">Monthly</li>
+                            <li data-value="semester">Semester</li>
+                            <li data-value="year">Yearly</li>
+                        </ul>
+                        <input type="hidden" id="timeframe" name="timeframe" />
+                    </div>
+                </div>
+                <div class="tab-container">
+                    <input type="radio" name="option" id="1" />
+                    <label for="1">
+                        <div class="tab-name" style="background: #62AD86;">Income & Savings Goals
+                        </div>
+                        <div class="tab-content">
+                            <form id="income_savings">
+                                <h3 id="income-label">Net Income:</h3>
+                                <input type="number" id="income" placeholder="Income ($)" pattern="[0-9]*" />
+                                <h3>Savings Goals:</h3>
+                                <input type="number" id="savings" placeholder="Savings ($)" pattern="[0-9]*" />
+                            </form>
+                        </div>
+                    </label>
+                    <input type="radio" name="option" id="2" />
+                    <label for="2">
+                        <div class="tab-name" style="background: #58595B;">Fixed Expenses</div>
+                        <div class="tab-content">
+                            <form id="fixed_expenses">
+                                <div class="accordion">
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">Necessities</h3>
+                                        <div class="accordion-content">
+                                            <h3>Housing Related Expense (Rent/Mortgage):</h3>
+                                            <input type="number" id="housing" placeholder="Monthly Housing Cost ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Meal Plan:</h3>
+                                            <input type="number" id="meal_plan"
+                                                placeholder="Semester Meal Plan Cost ($)" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">Internet and Phone Services</h3>
+                                        <div class="accordion-content">
+                                            <h3>Cell Phone Plan:</h3>
+                                            <input type="number" id="cell_phone"
+                                                placeholder="Monthly Cell Service Cost ($)" pattern="[0-9]*" />
+                                            <h3>Internet Service:</h3>
+                                            <input type="number" id="internet" placeholder="Monthly Internet Cost ($)"
+                                                pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">Transportation Expenses</h3>
+                                        <div class="accordion-content">
+                                            <h3>Car Payment:</h3>
+                                            <input type="number" id="car_pay" placeholder="Monthly Car Payment ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Auto Insurance:</h3>
+                                            <input type="number" id="auto_ins" placeholder="Auto Insurance ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Public Transit Pass:</h3>
+                                            <input type="number" id="septa_pass" placeholder="Month Pass ($)"
+                                                pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">Entertainment Expenses</h3>
+                                        <div class="accordion-content">
+                                            <h3>Music Subscription:</h3>
+                                            <input type="number" id="music_sub" placeholder="Monthly Subscription ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Video Subscription:</h3>
+                                            <input type="number" id="video_sub" placeholder="Monthly Subscription ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Amazon Prime:</h3>
+                                            <input type="number" id="amazon" placeholder="Subscription Cost ($)"
+                                                pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </label>
+                    <input type="radio" name="option" id="3" />
+                    <label for="3">
+                        <div class="tab-name" style="background: #0A86AE;">Variable Expenses</div>
+                        <div class="tab-content">
+                            <form id="variable_expenses">
+                                <div class="accordion">
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">School Essentials</h3>
+                                        <div class="accordion-content">
+                                            <h3>Textbooks and Course Materials:</h3>
+                                            <input type="number" id="textbooks"
+                                                placeholder="Textbook Costs in Semester ($)" pattern="[0-9]*" />
+                                            <h3>School Supplies (Notebooks, Pencils, etc.):</h3>
+                                            <input type="number" id="supplies"
+                                                placeholder="School Supplies in Semester ($)" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">Transportation Expenses</h3>
+                                        <div class="accordion-content">
+                                            <h3>Gas/EV Fueling or Charging</h3>
+                                            <input type="number" id="fuel" placeholder="Fueling or Charging Cost ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Tolls/EZ Pass</h3>
+                                            <input type="number" id="ez_pass" placeholder="Total Tolls ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Public Transit Fare (SEPTA Travel Wallet):</h3>
+                                            <input type="number" id="septa_fare" placeholder="Average Fare ($)"
+                                                pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h3 class="accordion-header">Food Related Expenses</h3>
+                                        <div class="accordion-content">
+                                            <h3>Groceries:</h3>
+                                            <input type="number" id="groceries"
+                                                placeholder="Average Groceries Cost ($)" pattern="[0-9]*" />
+                                            <h3>Food Delivery and Restaurants</h3>
+                                            <input type="number" id="eating_out" placeholder="Average Expense ($)"
+                                                pattern="[0-9]*" />
+                                            <h3>Bear Bucks:</h3>
+                                            <input type="number" id="bear_bucks"
+                                                placeholder="Average Bear Bucks Usage ($)" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </aside>
+        <section>
+            <div class="container">
+                <div id="plot"></div>
+                <div id="cash_flow"></div>
+            </div>
+        </section>
+        <footer>
+            Grizzly Guide to Wealth | Disclaimer: This calculator provides estimates
+            only and should not be considered as financial advice.
+        </footer>
+    </main>
+    <script>
+        const moduleElement = document.querySelector(".module");
+        const triggerElement = document.querySelector(".trigger span");
+        const timesListElement = document.querySelector(".times");
+        const timeframeInput = document.querySelector("#timeframe");
+
+        const incomeLabel = document.getElementById("income-label");
+        const cashFlow = document.getElementById("cash_flow");
+
+
+        const income = document.getElementById("income");
+
+        const savings = document.getElementById("savings");
+        const publicTransitFare = document.getElementById("septa_fare");
+        const publicTransitPass = document.getElementById("septa_pass");
+        const housing = document.getElementById("housing");
+        const cellPhone = document.getElementById("cell_phone");
+        const ispService = document.getElementById("internet");
+        const carPayment = document.getElementById("car_pay");
+        const autoIns = document.getElementById("auto_ins");
+        const tolls = document.getElementById("ez_pass");
+        const music = document.getElementById("music_sub");
+        const video = document.getElementById("video_sub");
+        const amazon = document.getElementById("amazon");
+        const textbook = document.getElementById("textbooks");
+        const schlSupplies = document.getElementById("supplies");
+        const eatingOut = document.getElementById("eating_out");
+        const mealPlan = document.getElementById("meal_plan")
+        const bearBucks = document.getElementById("bear_bucks");
+        const fuel = document.getElementById("fuel");
+        const groceries = document.getElementById("groceries");
+        // Add an additional constant here for more expenses
+
+        const nf = new Intl.NumberFormat(navigator.language, {
+            style: "currency",
+            currency: "USD",
+        });
+
+
+        let monthMultiplier = 1;
+
+        let semesterMultiplier = 1;
+
+        const accordionItems = document.querySelectorAll('.accordion-item');
+
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            header.addEventListener('click', () => {
+                // Close all other accordion items
+                accordionItems.forEach(i => {
+                    if (i !== item) {
+                        i.classList.remove('active');
+                    }
+                });
+
+                // Toggle the clicked accordion item
+                item.classList.toggle('active');
+            });
+        });
+
+
+        timesListElement.addEventListener("click", handleOptionSelection);
+
+        // Start of Relevant Functions:
+        // Function to handle option selection (as provided)
+        function handleOptionSelection(e) {
+            if (e.target.tagName === "LI") {
+                const value = e.target.getAttribute("data-value");
+                triggerElement.innerHTML = `<em>⏰</em>${e.target.textContent}`;
+                triggerElement.style.color = "var(--text-color)";
+                timeframeInput.value = value;
+                moduleElement.classList.toggle("active");
+                updateIncomeLabel(value); // Update the income label
+                calculateCashFlow();
+                if (Number(income.value) >= 0 && income.value.length > 0){
+                    plot();
+                }
+                // Toggle the "active" class on the module
+                moduleElement.classList.toggle("active");
+            }
+        }
+        
+        document.addEventListener("input", (e) => {
+            const isNumberInput = e.target.matches('input[type="number"]');
+            if (isNumberInput) {
+                const currentValue = e.target.value;
+                let isValidInput = currentValue.length > 0 && Number(currentValue) >= 0;
+
+                if (isValidInput) {
+                    saveExpensesToLocalStorage();
+                    calculateCashFlow();
+                    plot();
+                }
+            }
+        })
+        
+        function updateIncomeLabel(timeframe) {
+            switch (timeframe) {
+                case "month":
+                    incomeLabel.textContent = "Monthly Net Income:";
+                    monthMultiplier = 1;
+                    semesterMultiplier = 1 / 4;
+                    break;
+                case "semester":
+                    incomeLabel.textContent = "Semester Net Income:";
+                    monthMultiplier = 4;
+                    semesterMultiplier = 1;
+                    break;
+                case "year":
+                    incomeLabel.textContent = "Annual Net Income:";
+                    monthMultiplier = 12;
+                    semesterMultiplier = 2;
+                    break;
+                default:
+                    incomeLabel.textContent = "Net Income:";
+                    monthMultiplier = 1;
+                    semesterMultiplier = 1;
+            }
+        }
+
+        function collectExpenseValues() {
+            return [
+                {
+                    id: 'septa_pass',
+                    value: Number(publicTransitPass.value) * monthMultiplier,
+                    rawValue: publicTransitPass.value,
+                    category: 'Expenses',
+                    subcategory: 'Public Transit',
+                    name: 'Public Transit Pass'
+                },
+                {
+                    id: 'septa_fare',
+                    value: Number(publicTransitFare.value),
+                    rawValue: publicTransitFare.value,
+                    category: 'Expenses',
+                    subcategory: 'Public Transit',
+                    name: 'Public Transit Fare'
+                },
+                {
+                    id: 'housing',
+                    value: Number(housing.value) * monthMultiplier,
+                    rawValue: housing.value,
+                    category: 'Expenses',
+                    subcategory: 'Housing',
+                    name: 'Rent/Mortgage'
+                },
+                {
+                    id: 'cell_phone',
+                    value: Number(cellPhone.value) * monthMultiplier,
+                    rawValue: cellPhone.value,
+                    category: 'Expenses',
+                    subcategory: 'Internet and Phone',
+                    name: 'Cell Phone Plan'
+                },
+                {
+                    id: 'internet',
+                    value: Number(ispService.value) * monthMultiplier,
+                    rawValue: ispService.value,
+                    category: 'Expenses',
+                    subcategory: 'Internet and Phone',
+                    name: 'Internet Service'
+                },
+                {
+                    id: 'car_pay',
+                    value: Number(carPayment.value) * monthMultiplier,
+                    rawValue: carPayment.value,
+                    category: 'Expenses',
+                    subcategory: 'Car Expenses',
+                    name: 'Car Payment'
+                },
+                {
+                    id: 'auto_ins',
+                    value: Number(autoIns.value),
+                    rawValue: autoIns.value,
+                    category: 'Expenses',
+                    subcategory: 'Car Expenses',
+                    name: 'Auto Insurance'
+                },
+                {
+                    id: 'ez_pass',
+                    value: Number(tolls.value),
+                    rawValue: tolls.value,
+                    category: 'Expenses',
+                    subcategory: 'Car Expenses',
+                    name: 'Tolls/EZ Pass'
+                },
+                {
+                    id: 'music_sub',
+                    value: Number(music.value) * monthMultiplier,
+                    rawValue: music.value,
+                    category: 'Expenses',
+                    subcategory: 'Entertainment',
+                    name: 'Music Subscription'
+                },
+                {
+                    id: 'video_sub',
+                    value: Number(video.value) * monthMultiplier,
+                    rawValue: video.value,
+                    category: 'Expenses',
+                    subcategory: 'Entertainment',
+                    name: 'Video Subscription'
+                },
+                {
+                    id: 'amazon',
+                    value: Number(amazon.value) * monthMultiplier,
+                    rawValue: amazon.value,
+                    category: 'Expenses',
+                    subcategory: 'Entertainment',
+                    name: 'Amazon Prime'
+                },
+                {
+                    id: 'textbooks',
+                    value: Number(textbook.value) * semesterMultiplier,
+                    rawValue: textbook.value,
+                    category: 'Expenses',
+                    subcategory: 'School Essentials',
+                    name: 'Textbooks and Course Materials'
+                },
+                {
+                    id: 'supplies',
+                    value: Number(schlSupplies.value),
+                    rawValue: schlSupplies.value,
+                    category: 'Expenses',
+                    subcategory: 'School Essentials',
+                    name: 'School Supplies'
+                },
+                {
+                    id: 'eating_out',
+                    value: Number(eatingOut.value),
+                    rawValue: eatingOut.value,
+                    category: 'Expenses',
+                    subcategory: 'Eating Out',
+                    name: 'Food Delivery and Restaurants'
+                },
+                {
+                    id: 'bear_bucks',
+                    value: Number(bearBucks.value),
+                    rawValue: bearBucks.value,
+                    category: 'Expenses',
+                    subcategory: 'Eating On Campus',
+                    name: 'Bear Bucks'
+                },
+                {
+                    id: 'meal_plan',
+                    value: Number(mealPlan.value) * semesterMultiplier,
+                    rawValue: mealPlan.value,
+                    category: 'Expenses',
+                    subcategory: 'Eating On Campus',
+                    name: 'Meal Plan'
+                },
+                {
+                    id: 'fuel',
+                    value: Number(fuel.value),
+                    rawValue: fuel.value,
+                    category: 'Expenses',
+                    subcategory: 'Car Expenses',
+                    name: 'Gas Fueling / EV Charging'
+                },
+                {
+                    id: 'groceries',
+                    value: Number(groceries.value),
+                    rawValue: groceries.value,
+                    category: 'Expenses',
+                    subcategory: 'Groceries',
+                    name: 'Groceries'
+                }
+                //Add more expenses here :)
+            ];
+        }
+
+        function addBarExpenses(data) {
+            const expenses = collectExpenseValues();
+
+            expenses.forEach(expense => {
+                if (expense.value > 0) {
+                    data.push({
+                        x: [expense.category],
+                        y: [expense.value],
+                        type: 'bar',
+                        name: expense.subcategory,
+                        hovertext: `${expense.name}: ${nf.format(expense.value)}`,
+                        hoverinfo: 'text'
+                    });
+                }
+            });
+
+            return data;
+        }
+
+        function addPieExpenses() {
+            const expenses = collectExpenseValues();
+            const incomeVal = Number(income.value);
+            const saveVal = Number(savings.value);
+            var values = [];
+            var labels = [];
+            var colors = []; 
+
+            if (saveVal > 0) {
+                values.push(saveVal);
+                labels.push("Savings");
+                colors.push("#510043"); 
+            }
+
+            var expensesTotal = 0;
+
+            expenses.forEach(expense => {
+                if (expense.value > 0) {
+                    expensePercent = expense.value;
+                    expensesTotal += expensePercent;
+                    values.push(expensePercent);
+                    labels.push(expense.subcategory);
+                    //Randomly generate a hexcode:
+                    hexcode = "#" + Math.floor(Math.random()*16777215).toString(16);
+                    colors.push(hexcode);
+                }
+            });
+
+            const leftoverIncome = incomeVal - saveVal - expensesTotal;
+            values.push(leftoverIncome);
+            labels.push("Income");
+            colors.push("#62AD86"); // Default color for expenses
+
+            return [values, labels, colors];
+        }
+
+        function piePlot() {
+            [vals, labels, colors] = addPieExpenses()
+            
+            var data = [{
+                type: "pie",
+                values: vals,
+                labels: labels,
+                textinfo: "label+percent",
+                insidetextorientation: "radial",
+                marker: {
+                    colors: colors
+                }
+            }];
+
+            var layout = {
+                title: {
+                    text: "Financial Snapshot 📸",
+                    font: {
+                        family: "Bespoke Serif, serif",
+                        size: 24,
+                    },
+                },
+                xaxis: {
+                    title: {
+                        text: "Category",
+                        font: {
+                            family: "Oak Sans, sans-serif",
+                            size: 16,
+                        },
+                    },
+                    gridcolor: "#f0f0f0",
+                },
+                yaxis: {
+                    tickprefix: "$",
+                    gridcolor: "#f0f0f0",
+                },
+                hoverlabel: {
+                    font: {
+                        family: "Oak Sans, sans-serif",
+                    },
+                },
+                paper_bgcolor: "rgba(0,0,0,0)",
+                plot_bgcolor: "rgba(0,0,0,0)",
+                showlegend: true,
+                legend: {
+                    orientation: "h",
+                    y: -0.7,
+                    x: 0.5,
+                    xanchor: "center",
+                    yanchor: "bottom",
+                },
+                margin: {
+                    t: 60,
+                    b: 80,
+                },
+            };
+
+            var config = {
+                responsive: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ["lasso2d", "select2d"],
+            };
+
+            Plotly.newPlot('plot', data, layout, config)
+        }
+
+        function plot() {
+            var data = [
+                {
+                    x: ['Income'],
+                    y: [Number(income.value)],
+                    type: 'bar',
+                    name: "Income",
+                    hovertext: `Income: ${nf.format(Number(income.value))}`,
+                    hoverinfo: 'text',
+                    marker: {
+                        color: "#62AD86"
+                    }
+                },
+                {
+                    x: ['Savings'],
+                    y: [Number(savings.value)],
+                    type: 'bar',
+                    name: "Savings",
+                    hovertext: `Savings: ${nf.format(Number(savings.value))}`,
+                    hoverinfo: 'text',
+                    marker: {
+                        color: "#510043"
+                    }
+                },
+            ];
+            data = addBarExpenses(data);
+
+            var layout = {
+                title: {
+                    text: "Financial Snapshot 📸",
+                    font: {
+                        family: "Bespoke Serif, serif",
+                        size: 24,
+                    },
+                },
+                xaxis: {
+                    title: {
+                        text: "Category",
+                        font: {
+                            family: "Oak Sans, sans-serif",
+                            size: 16,
+                        },
+                    },
+                    gridcolor: "#f0f0f0",
+                },
+                yaxis: {
+                    tickprefix: "$",
+                    gridcolor: "#f0f0f0",
+                },
+                hoverlabel: {
+                    font: {
+                        family: "Oak Sans, sans-serif",
+                    },
+                },
+                paper_bgcolor: "rgba(0,0,0,0)",
+                plot_bgcolor: "rgba(0,0,0,0)",
+                showlegend: true,
+                barmode: 'stack',
+                barcornerradius: 15,
+                legend: {
+                    orientation: "h",
+                    y: -0.7,
+                    x: 0.5,
+                    xanchor: "center",
+                    yanchor: "bottom",
+                },
+                margin: {
+                    t: 60,
+                    b: 80,
+                },
+            };
+
+            var config = {
+                responsive: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ["lasso2d", "select2d"],
+            };
+
+            Plotly.newPlot('plot', data, layout, config)
+        }
+
+        function calculateCashFlow() {
+            const expenses = collectExpenseValues();
+            const totalExpenses = expenses.reduce((sum, expense) => sum + expense.value, 0);
+            const netIncome = (Number(income.value) - Number(savings.value) - totalExpenses).toFixed(2);
+            cashFlow.style.display = "block";
+
+            let displayCashFlow;
+
+            isTimeFrame = timeframeInput.value != "";
+
+            if (netIncome > 0) {
+                displayCashFlow = `Awesome! you have ${nf.format(netIncome)} left over
+                ${isTimeFrame ? ` after a ${timeframeInput.value}! 🥳` : `! 🥳`}`;
+            } else if (netIncome == 0) {
+                if (totalExpenses > 0 || Number(savings.value)) {
+                    displayCashFlow = `Wow, you perfectly balanced your expenses with your income, and you have nothing left...`;
+                } else {
+                    displayCashFlow = `Not enough values to display plot, continue adding values!`;
+                }
+            } else {
+                displayCashFlow = `Oh no! 😱, you overspent by ${nf.format(-1 * netIncome)} 
+                ${isTimeFrame ? `after a ${timeframeInput.value}` : ``}
+                 <br>
+                Maybe, you should cut on some expenses... 🤔`
+            }
+
+            cashFlow.innerHTML = displayCashFlow;
+        }
+
+        // Function to save expense values to local storage
+        function saveExpensesToLocalStorage() {
+            const expenses = collectExpenseValues();
+            // Save as JSON string
+            localStorage.setItem('expenses', JSON.stringify(expenses)); 
+        }
+
+        // Function to load expense values from local storage
+        function loadExpensesFromLocalStorage() {
+            // Parse JSON string
+            const savedExpenses = JSON.parse(localStorage.getItem('expenses')); 
+            if (savedExpenses) {
+                // Match input by ID
+                savedExpenses.forEach(expense => {
+                    const input = document.getElementById(expense.id); 
+                    if (input) {
+                        // Populate input with saved value
+                        input.value = expense.rawValue || 0;
+                    }
+                });
+            }
+        }
+   
+   </script>
+</body>
+
+</html>

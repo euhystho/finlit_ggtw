@@ -1,17 +1,20 @@
 # Financial Calculators:
-## [Risk Tolerance Calculator](risktolerance.html)
+## [Risk Tolerance Calculator](calculators/risktolerance.html)
 
 
-## [Annuity Calculator](annuity.html)
+## [Annuity Calculator](calculators/annuity.html)
 
 
-## [Expense Calculator](expense.html)
+## [Expense Calculator](calculators/expense.html)
 
 
-## [Future Value Calculator](future_value.html)
+## [Future Value Calculator](calculators/future_value.html)
 
 
-## [Loan Repayment Calculator](loanrepayment.html)
+## [Loan Repayment Calculator](calculators/loanrepayment.html)
 
 
-## [Emergency Savings Calculator](savings.html)
+## [Emergency Savings Calculator](calculators/savings.html)
+
+
+## [Documentation and Intern Document](documentation/GGTW_InternDoc.pdf)
