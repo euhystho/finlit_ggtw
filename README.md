@@ -1,7 +1,5 @@
 # Financial Literacy for Grizzly Guide to Wealth 🐻💰
 
-A collection of interactive financial literacy calculators designed to help students understand and practice key financial concepts.
-
 ## ℹ️ Overview
 
 The Grizzly Guide to Wealth is a Canvas Course offered by Ursinus College. In my internship, I created web-based financial calculators that provide tools for understanding various financial concepts like emergency savings, loan repayment, investment growth, and risk tolerance. These tools feature simple and intuitive interfaces and visual representations to make financial planning more accessible.
